@@ -1,47 +1,35 @@
 package com.example.homeworkapp.ui.theme.login
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 
-import com.example.homeworkapp.Graph
 import com.example.homeworkapp.data.entity.Credentials
+import com.example.homeworkapp.data.entity.room.HomeWorkDatabase
 import com.example.homeworkapp.data.repository.CredentialsRepository
-import com.example.homeworkapp.ui.theme.messageList.MessageListViewState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
-import java.util.Optional.empty
 
 class LoginViewModel(
-    private val credentialsRepository: CredentialsRepository = Graph.credentialRepository
+    application: Application
 ): ViewModel() {
-    private val _state = MutableStateFlow(LoginViewState())
-    val state: StateFlow<LoginViewState>
-        get() = _state
 
+    val credentials: LiveData<List<Credentials>>
+    private val repository: CredentialsRepository
 
     init {
-        viewModelScope.launch {
-            _state.value = LoginViewState(
-                credential = credentialsRepository.getCredentialsWithId(1)!!
-            )
-        }
-        loadCredentialsFromDb()
-
+        val credentialDb = HomeWorkDatabase.getInstance(application)
+        val credentialDao = credentialDb.credentialsDao()
+        repository = CredentialsRepository(credentialDao)
+        insertProduct(Credentials(id=1, password = "password", username = "user"))
+        credentials = repository.credentials
     }
-    private fun loadCredentialsFromDb( ) {
-        val list = mutableListOf(
-            Credentials(username = "valtteri", password = "salasana", id = 1)
-        )
-        
-        viewModelScope.launch {
-            list.forEach {
-                    credentials -> credentialsRepository.addCredential(credentials)
-            }
-        }
+
+    fun insertProduct(credential: Credentials) {
+        repository.insertProduct(credential)
+    }
+
+    fun findProduct(id: Long) {
+        repository.getCredentialsWithId(id)
     }
 }
-data class LoginViewState(
-    val credential: Credentials = Credentials(id = 1, password = "s", username = "valtteri")
-)
+
+
+

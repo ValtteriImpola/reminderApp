@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,9 +24,10 @@ fun LoginScreen(
     navController: NavController,
     viewModel: LoginViewModel
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val credentials by viewModel.credentials.observeAsState(listOf())
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+
 
     Column (
         modifier = modifier.padding(20.dp),
@@ -33,12 +35,6 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
 
     ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-//            contentDescription = "login_image",
-//            modifier = Modifier.fillMaxWidth(),
-//            alignment = Alignment.Center
-//        )
         Icon(painter = rememberVectorPainter(Icons.Filled.Person),
             contentDescription = "Login_image",
             modifier = Modifier
@@ -73,12 +69,7 @@ fun LoginScreen(
 
         Button(
             onClick = {
-//                scope.launch {
-//                   dataStore.saveEmail("sss")
-//                        }
-               ValidateCredentials(navController, username.value, password.value, viewState.credential.username)
-
-
+            ValidateCredentials(navController, username.value, password.value, credentials[0].username,credentials[0].password)
                       },
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,28 +85,12 @@ private fun ValidateCredentials(
     navController: NavController,
     username: String,
     password: String,
-    savedUsername: String?
+    savedUsername: String,
+    savedPassword: String
 ) {
 
-    if(username == savedUsername){
+    if(username == savedUsername && password == savedPassword){
         navController.navigate("home")
     }
 }
 
-/*
-@Composable
-fun Login(
-   // navController: NavController
-){
-    Surface(modifier = Modifier.fillMaxSize()){
-
-
-    }
-}*/
-
-/*
-@Preview
-@Composable
-fun Preview() {
-    LoginScreen(modifier = Modifier, navController = NavController() )
-}*/

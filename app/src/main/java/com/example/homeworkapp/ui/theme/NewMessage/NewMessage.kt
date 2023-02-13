@@ -67,20 +67,6 @@ fun NewMessage(
                     shape = RoundedCornerShape(corner = CornerSize(50.dp))
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = { Text(text = "Date") },
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = { Text(text = "Amount") },
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = { handleAddingNewMessage(viewModel, navController, messageContent.value, messageTopic.value) },
                     modifier = Modifier.fillMaxWidth().size(55.dp)

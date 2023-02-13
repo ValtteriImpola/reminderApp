@@ -2,11 +2,7 @@ package com.example.homeworkapp
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.homeworkapp.ui.theme.NewMessage.NewMessage
@@ -17,13 +13,12 @@ import com.example.homeworkapp.ui.theme.messageList.MessageListViewModel
 
 @Composable
 fun HomeWorkApp(
+    viewModelLogIn: LoginViewModel,
     appState: HomeWorkAppState = rememberHomeWorkAppState(),
     viewModel: MessageListViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    viewModelLogIn: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+
 
 ) {
-
-    //val viewState by viewModel.state.collectAsState()
     NavHost(
         navController = appState.navController,
         startDestination = "loginScreen"

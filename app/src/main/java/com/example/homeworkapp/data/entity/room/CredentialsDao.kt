@@ -1,19 +1,24 @@
 package com.example.homeworkapp.data.entity.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.homeworkapp.data.entity.Credentials
+import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class CredentialsDao {
+interface CredentialsDao {
 
-    @Query(value = "SELECT * FROM credentials WHERE id = :id")
-    abstract fun getCredentialsWithId(id: Long): Credentials?
+    @Query("SELECT * FROM credentials WHERE id = :id")
+    fun getCredentialsWithId(id: Long): LiveData<List<Credentials>>
+
+//    @Query("SELECT * FROM credentials LIMIT 15")
+//    abstract fun credentials(): Flow<List<Credentials>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(entity: Credentials): Long
+    fun insert(entity: Credentials): Long
 
 
 }

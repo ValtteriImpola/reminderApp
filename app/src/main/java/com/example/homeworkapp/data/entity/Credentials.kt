@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.lang.reflect.Constructor
 
 @Entity(
     tableName = "credentials",
@@ -11,8 +12,21 @@ import androidx.room.PrimaryKey
         Index("id", unique = true)
     ]
 )
-data class Credentials(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id:Long,
-    @ColumnInfo(name = "password") val password: String,
-    @ColumnInfo(name = "username") val username: String,
-)
+class Credentials {
+    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo(name = "id")
+    var id: Long = 1
+    @ColumnInfo(name = "password")
+    var password: String = ""
+    @ColumnInfo(name = "username")
+    var username: String = ""
+
+
+    constructor() {}
+
+    constructor(id: Long, username: String, password: String) {
+        this.id = id
+        this.password = password
+        this.username = username
+    }
+}

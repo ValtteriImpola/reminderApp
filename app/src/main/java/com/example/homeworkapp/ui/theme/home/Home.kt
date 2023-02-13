@@ -24,24 +24,10 @@ import com.example.homeworkapp.ui.theme.messageList.MessagePage
 
 @Composable
 fun Home(
-    //viewModel: HomeViewModel = viewModel(),
     navController: NavController,
     viewModel: MessageListViewModel
 ) {
-    /*val viewState by viewModel.state.collectAsState()
 
-    val selectedCategory = viewState.selectedCategory
-
-    if (viewState.categories.isNotEmpty() && selectedCategory != null ) {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            HomeContent(
-                selectedCategory = selectedCategory,
-                categories = viewState.categories,
-                onCategorySelected = viewModel::onCategorySelected,
-                navController = navController
-            )
-        }
-    }*/
     HomeContent(navController = navController, viewModel)
 }
 
@@ -75,7 +61,7 @@ fun HomeContent(
             val appBarColor = MaterialTheme.colors.secondary.copy(alpha = 0.87f)
 
             HomeAppBar(
-                backgroundColor = appBarColor,
+                backgroundColor = appBarColor, navController
             )
 
             MessagePage(viewModel)
@@ -85,7 +71,8 @@ fun HomeContent(
 
 @Composable
 private fun HomeAppBar(
-    backgroundColor: Color
+    backgroundColor: Color,
+    navController: NavController
 ){
     TopAppBar(
         title = {
@@ -102,7 +89,7 @@ private fun HomeAppBar(
             IconButton( onClick = {} ) {
                 Icon(imageVector = Icons.Filled.Search, contentDescription = "search")
             }
-            IconButton( onClick = {} ) {
+            IconButton( onClick = {navController.navigate(route = "loginScreen") } ) {
                 Icon(imageVector = Icons.Filled.Person, contentDescription = "account")
             }
         }
