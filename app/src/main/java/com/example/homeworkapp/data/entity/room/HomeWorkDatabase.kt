@@ -1,24 +1,24 @@
 package com.example.homeworkapp.data.entity.room
 
 import android.content.Context
-import android.os.AsyncTask
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.homeworkapp.data.entity.Credentials
+import com.example.homeworkapp.data.entity.Reminder
 
 
 @androidx.room.Database(
-    entities = [Credentials::class],
-    version = 1,
+    entities = [Credentials::class, Reminder::class],
+    version = 5,
     exportSchema = false
 )
 abstract class HomeWorkDatabase : RoomDatabase() {
     abstract fun credentialsDao(): CredentialsDao
+    abstract fun reminderDao(): ReminderDao
     companion object {
 
         private var INSTANCE: HomeWorkDatabase? = null
-        val PREPOPULATE_DATA = Credentials(id = 1, password = "1", username = "val")
+
         fun getInstance(context: Context): HomeWorkDatabase {
             synchronized(this) {
                 var instance = INSTANCE

@@ -19,13 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.homeworkapp.ui.theme.login.LoginViewModel
 import com.example.homeworkapp.ui.theme.messageList.MessageListViewModel
 import com.example.homeworkapp.ui.theme.messageList.MessagePage
 
 @Composable
 fun Home(
     navController: NavController,
-    viewModel: MessageListViewModel
+    viewModel: LoginViewModel
 ) {
 
     HomeContent(navController = navController, viewModel)
@@ -35,7 +36,7 @@ fun Home(
 @Composable
 fun HomeContent(
     navController: NavController,
-    viewModel: MessageListViewModel
+    viewModel: LoginViewModel
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom =24.dp),

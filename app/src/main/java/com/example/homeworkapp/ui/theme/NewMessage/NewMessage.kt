@@ -15,14 +15,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.homeworkapp.data.entity.Reminder
+import com.example.homeworkapp.ui.theme.login.LoginViewModel
 import com.example.homeworkapp.ui.theme.messageList.MessageListViewModel
+import java.util.*
 
 
 @Composable
 fun NewMessage(
     onBackPress: () -> Unit,
     navController: NavController,
-    viewModel: MessageListViewModel
+    viewModel: LoginViewModel
 ) {
   //  val viewModel: MessageListViewModel = viewModel()
     val messageContent = remember { mutableStateOf("") }
@@ -81,12 +84,13 @@ fun NewMessage(
 
 
 private fun handleAddingNewMessage(
-    viewModel: MessageListViewModel,
+    viewModel: LoginViewModel,
     navController: NavController,
     content: String,
     type: String
 ) {
-    viewModel.inc(content, type)
+    //viewModel.inc(content, type)
+    viewModel.insertReminder(Reminder( id = 2,message = content, type = type, date = Date().toString()))
     navController.navigate("home")
 }
 

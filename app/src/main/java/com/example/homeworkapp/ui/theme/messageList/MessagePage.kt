@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,28 +24,31 @@ import androidx.constraintlayout.compose.Dimension
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.homeworkapp.data.entity.Message
+import com.example.homeworkapp.data.entity.Reminder
+import com.example.homeworkapp.ui.theme.login.LoginViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun MessagePage(
-    viewModel: MessageListViewModel
+    viewModel: LoginViewModel
 ) {
   //  val viewModel: MessageListViewModel = viewModel()
-    val viewState by viewModel.state.collectAsState()
+//    val viewState by viewModel.state.collectAsState()
+    val viewState by viewModel.reminder.observeAsState(listOf())
 
     Column(Modifier.fillMaxWidth()) {
         MessageList(
             viewModel,
-            list = viewState.messages
+            list = viewState
         )
     }
 }
 
 @Composable
 private fun MessageList(
-    viewModel: MessageListViewModel,
-    list: List<Message>
+    viewModel: LoginViewModel,
+    list: List<Reminder>
 ){
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
@@ -52,10 +56,10 @@ private fun MessageList(
     ){
         items(list) { item ->
             MessageListItem(
-                message = item,
+                reminder = item,
                 onClick = {},
-                modifier = Modifier.fillParentMaxWidth(),
-                viewModel
+                modifier = Modifier.fillParentMaxWidth()
+              // viewModel
             )
         }
     }
@@ -63,10 +67,10 @@ private fun MessageList(
 
 @Composable
 private fun MessageListItem(
-    message: Message,
+    reminder: Reminder,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MessageListViewModel
+  //  viewModel: MessageListViewModel
 ) {
     ConstraintLayout(modifier = Modifier.clickable { onClick() }) {
         val (divider, messageContent, messageType, icon, date) = createRefs()
@@ -79,7 +83,7 @@ private fun MessageListItem(
         )
         // Title
         Text(
-            text = message.messageContent,
+            text = reminder.message,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.constrainAs(messageContent) {
@@ -95,7 +99,7 @@ private fun MessageListItem(
         )
         // Category
         Text(
-            text = message.messageContent,
+            text = reminder.message,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle2,
             modifier = Modifier.constrainAs(messageType) {
@@ -114,7 +118,7 @@ private fun MessageListItem(
         // date
         Text(
             text = when {
-                message.messageDate != null -> { message.messageDate.formatToString() }
+                reminder.date != null -> { reminder.date}
                 else -> Date().formatToString()
             },
             maxLines = 1,

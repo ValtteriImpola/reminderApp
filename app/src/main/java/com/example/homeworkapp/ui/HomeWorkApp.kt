@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.homeworkapp.ui.theme.NewMessage.NewMessage
 import com.example.homeworkapp.ui.theme.home.Home
+import com.example.homeworkapp.ui.theme.home.HomeViewModel
 import com.example.homeworkapp.ui.theme.login.LoginScreen
 import com.example.homeworkapp.ui.theme.login.LoginViewModel
 import com.example.homeworkapp.ui.theme.messageList.MessageListViewModel
@@ -16,7 +17,6 @@ fun HomeWorkApp(
     viewModelLogIn: LoginViewModel,
     appState: HomeWorkAppState = rememberHomeWorkAppState(),
     viewModel: MessageListViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-
 
 ) {
     NavHost(
@@ -29,11 +29,11 @@ fun HomeWorkApp(
         }
         composable( route = "home") {
             Home(
-                navController = appState.navController, viewModel
+                navController = appState.navController, viewModelLogIn
             )
         }
         composable( route = "message") {
-            NewMessage(onBackPress = appState::navigateBack, navController = appState.navController, viewModel)
+            NewMessage(onBackPress = appState::navigateBack, navController = appState.navController, viewModelLogIn)
         }
     }
 }
