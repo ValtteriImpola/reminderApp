@@ -65,7 +65,7 @@ fun HomeContent(
                 backgroundColor = appBarColor, navController
             )
 
-            MessagePage(viewModel)
+            MessagePage(viewModel, navController)
         }
     }
 }

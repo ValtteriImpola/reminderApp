@@ -12,7 +12,7 @@ import com.example.homeworkapp.data.entity.Reminder
 interface ReminderDao {
 
     @Query("SELECT * FROM reminders WHERE id = :id")
-    fun getCredentialsWithId(id: Long): LiveData<List<Reminder>>
+    fun getRemiderWithId(id: Long): List<Reminder>
 
 //    @Query("SELECT * FROM credentials LIMIT 15")
 //    abstract fun credentials(): Flow<List<Credentials>>
@@ -20,4 +20,9 @@ interface ReminderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entity: Reminder): Long
 
+    @Query("SELECT * FROM reminders")
+    fun getAllReminders(): LiveData<List<Reminder>>
+
+    @Query("DELETE FROM reminders WHERE id = :id")
+    fun deleteReminder(id: Long)
 }

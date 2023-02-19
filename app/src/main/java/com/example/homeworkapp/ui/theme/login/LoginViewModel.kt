@@ -21,13 +21,16 @@ class LoginViewModel(
 
     val credentials: LiveData<List<Credentials>>
     private val repository: CredentialsRepository
-
+    val searchResults: MutableLiveData<List<Reminder>>
     val reminder: LiveData<List<Reminder>>
     private val repositoryReminder: ReminderRepository
     private val _state = MutableStateFlow(MessageListViewState())
+    private val _reminderInEdit = MutableStateFlow(ReminderInEditViewState())
     val state: StateFlow<MessageListViewState>
         get() = _state
 
+    val reminderInEdit: StateFlow<ReminderInEditViewState>
+        get() = _reminderInEdit
     init {
         val credentialDb = HomeWorkDatabase.getInstance(application)
         val credentialDao = credentialDb.credentialsDao()
@@ -40,34 +43,17 @@ class LoginViewModel(
         repositoryReminder = ReminderRepository(reminderDao)
         reminder = repositoryReminder.reminders
 
+        searchResults = repositoryReminder.searchResults
 
-//        val list = mutableListOf<Message>()
-//        for (x in 1..20) {
-//            list.add(
-//                Message(
-//                    Id = x.toLong(),
-//                    messageContent = "$x Message",
-//                    messageDate = Date(),
-//                    messageType = "Reminder"
-//                )
-//            )
-//        }
-//        viewModelScope.launch {
-//            _state.value = MessageListViewState(
-//                messages = reminders
-//            )
-//        }
     }
 
     fun insertReminder(reminder: Reminder) {
         repositoryReminder.insertReminder(reminder)
     }
 
-//    fun findProduct(id: Long) {
-////        repository.getCredentialsWithId(id)
-//    }
-
-
+    fun searchReminderWithId(id: Long){
+        repositoryReminder.getReminderWithId(id)
+    }
     fun insertProduct(credential: Credentials) {
         repository.insertProduct(credential)
     }
@@ -75,9 +61,24 @@ class LoginViewModel(
     fun findProduct(id: Long) {
         repository.getCredentialsWithId(id)
     }
+
+    fun deleteReminder(id: Long) {
+        repositoryReminder.deleteReminder(id)
+    }
+
+    fun setReminderInEdit(reminder: Reminder) {
+        viewModelScope.launch {
+            _reminderInEdit.value = ReminderInEditViewState(
+                reminder = reminder
+            )
+        }
+    }
 }
 
 data class MessageListViewState(
     val messages: List<Message> = emptyList()
+)
+data class ReminderInEditViewState(
+    val reminder: Reminder = Reminder()
 )
 

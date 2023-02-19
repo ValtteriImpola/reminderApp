@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.homeworkapp.ui.EditReminder
 import com.example.homeworkapp.ui.theme.NewMessage.NewMessage
 import com.example.homeworkapp.ui.theme.home.Home
 import com.example.homeworkapp.ui.theme.home.HomeViewModel
@@ -34,6 +35,9 @@ fun HomeWorkApp(
         }
         composable( route = "message") {
             NewMessage(onBackPress = appState::navigateBack, navController = appState.navController, viewModelLogIn)
+        }
+        composable( route = "editReminder") {
+            EditReminder(onBackPress = appState::navigateBack, navController = appState.navController, viewModelLogIn)
         }
     }
 }
