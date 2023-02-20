@@ -1,12 +1,7 @@
 package com.example.homeworkapp.ui.theme.home
 
 import android.app.Application
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-
-import com.example.homeworkapp.data.entity.Reminder
-import com.example.homeworkapp.data.entity.room.ReminderDatabase
-import com.example.homeworkapp.data.repository.ReminderRepository
 
 
 class HomeViewModel( application: Application): ViewModel() {

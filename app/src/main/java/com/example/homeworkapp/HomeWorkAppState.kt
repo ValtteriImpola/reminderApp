@@ -5,7 +5,6 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.homeworkapp.ui.theme.messageList.MessageListViewModel
 
 class HomeWorkAppState (
     val navController: NavHostController

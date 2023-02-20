@@ -82,7 +82,9 @@ private fun MessageListItem(
     ConstraintLayout(modifier = Modifier.clickable { onClick() }) {
         val (divider, messageContent, messageType, icon, date) = createRefs()
         Divider(
-            Modifier.constrainAs(divider) {
+            Modifier
+                .fillMaxWidth()
+                .constrainAs(divider) {
                 top.linkTo(parent.top)
                 centerHorizontallyTo(parent)
                 width = Dimension.fillToConstraints
@@ -91,7 +93,7 @@ private fun MessageListItem(
         // Title
         Text(
             text = reminder.message,
-            maxLines = 1,
+            maxLines = 2,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.constrainAs(messageContent) {
                 linkTo(
@@ -104,27 +106,10 @@ private fun MessageListItem(
                 width = Dimension.preferredWrapContent
             }
         )
-        // Category
-        Text(
-            text = reminder.message,
-            maxLines = 1,
-            style = MaterialTheme.typography.subtitle2,
-            modifier = Modifier.constrainAs(messageType) {
-                linkTo(
-                    start = parent.start,
-                    end = icon.start,
-                    startMargin = 24.dp,
-                    endMargin = 8.dp
-                )
-                top.linkTo(messageContent.bottom, margin = 10.dp)
-                bottom.linkTo(parent.bottom, 10.dp)
-                width = Dimension.preferredWrapContent
-            }
-        )
 
         // date
         Text(
-            text = reminder.date,
+            text = reminder.reminder_time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,
@@ -160,7 +145,7 @@ private fun MessageListItem(
             onClick = {  viewModel.deleteReminder(reminder.id)},
         )
         {
-            Icon(imageVector = Icons.Filled.Delete, contentDescription = "edit")
+            Icon(imageVector = Icons.Filled.Delete, contentDescription = "delete")
         }
     }
 }

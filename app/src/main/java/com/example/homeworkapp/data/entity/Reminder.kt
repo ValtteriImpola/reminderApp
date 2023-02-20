@@ -1,5 +1,6 @@
 package com.example.homeworkapp.data.entity
 
+import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -19,18 +20,32 @@ class Reminder {
     var id: Long = 1
     @ColumnInfo(name = "message")
     var message: String = ""
-    @ColumnInfo(name = "type")
-    var type: String = ""
-    @ColumnInfo(name = "date")
-    var date: String = ""
+    @ColumnInfo(name = "reminder_seen")
+    var reminder_seen: Boolean = false
+    @ColumnInfo(name = "reminder_time")
+    var reminder_time: String = ""
+    @ColumnInfo(name = "location_x")
+    var location_x: String = ""
+    @ColumnInfo(name = "location_y")
+    var location_y: String = ""
+    @ColumnInfo(name = "creator_id")
+    var creator_id: Long = 0
+    @ColumnInfo(name = "image_data")
+    var image_data: String = ""
 
 
     constructor() {}
 
-    constructor(id: Long, message: String, type: String, date: String) {
+    constructor(id: Long, message: String, reminder_seen: Boolean, reminder_time: String,
+                location_x: String, location_y: String, creator_id: Long, image_data: String) {
         this.id = id
         this.message = message
-        this.type = type
-        this.date = date
+        this.reminder_seen = reminder_seen
+        this.reminder_time = reminder_time
+        this.location_x = location_x
+        this.location_y = location_y
+        this.creator_id = creator_id
+        this.image_data = image_data
+
     }
 }

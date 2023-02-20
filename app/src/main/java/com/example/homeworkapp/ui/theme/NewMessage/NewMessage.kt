@@ -1,35 +1,50 @@
 package com.example.homeworkapp.ui.theme.NewMessage
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.example.homeworkapp.data.entity.Reminder
 import com.example.homeworkapp.ui.theme.login.LoginViewModel
-import com.example.homeworkapp.ui.theme.messageList.MessageListViewModel
 import java.util.*
 
 
+@OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun NewMessage(
     onBackPress: () -> Unit,
     navController: NavController,
     viewModel: LoginViewModel
 ) {
-  //  val viewModel: MessageListViewModel = viewModel()
     val messageContent = remember { mutableStateOf("") }
-    val messageTopic = remember { mutableStateOf("") }
+
+    var selectImages by remember { mutableStateOf(listOf<Uri>()) }
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
+            selectImages = it
+        }
+  //  val messageTopic = remember { mutableStateOf("") }
+    var savedUri: Uri
     Surface {
         Column(
             modifier = Modifier
@@ -53,25 +68,45 @@ fun NewMessage(
                 modifier = Modifier.padding(16.dp)
 
             ) {
+
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = messageContent.value,
                     onValueChange = { text -> messageContent.value = text},
-                    label = { Text(text = "Message topic") },
-                    shape = RoundedCornerShape(corner = CornerSize(50.dp))
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = messageTopic.value,
-                    onValueChange = { text -> messageTopic.value = text},
                     label = { Text(text = "Message content") },
                     shape = RoundedCornerShape(corner = CornerSize(50.dp))
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
-                    onClick = { handleAddingNewMessage(viewModel, navController, messageContent.value, messageTopic.value) },
+                    onClick = { galleryLauncher.launch("image/*") },
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(10.dp)
+                ) {
+                    Text(text = "Pick Image From Gallery")
+                }
+
+                LazyVerticalGrid(GridCells.Fixed(1)) {
+                    items(selectImages) { uri ->
+                        Image(
+                            painter = rememberImagePainter(uri),
+                            contentScale = ContentScale.FillWidth,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(16.dp, 8.dp)
+                                .size(100.dp)
+                                .clickable {
+
+                                }
+                        )
+                        savedUri = uri
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Button(
+                    onClick = { handleAddingNewMessage(viewModel, navController, messageContent.value, selectImages[0]) },
                     modifier = Modifier.fillMaxWidth().size(55.dp)
                 ) {
                     Text("Save reminder")
@@ -82,17 +117,18 @@ fun NewMessage(
     }
 }
 
-
 private fun handleAddingNewMessage(
     viewModel: LoginViewModel,
     navController: NavController,
     content: String,
-    type: String
+    uri: Uri
 ) {
     //viewModel.inc(content, type)
 
+    val ss = uri.toString()
     val generatedID: Int = (10..10000).random()
-    viewModel.insertReminder(Reminder( id = generatedID.toLong(),message = content, type = type, date = Date().toString()))
+    viewModel.insertReminder(Reminder( id = generatedID.toLong(),message = content, reminder_seen = false,
+        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, uri.toString()  ))
     navController.navigate("home")
 }
 

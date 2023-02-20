@@ -9,11 +9,9 @@ import com.example.homeworkapp.data.entity.Reminder
 import com.example.homeworkapp.data.entity.room.HomeWorkDatabase
 import com.example.homeworkapp.data.repository.CredentialsRepository
 import com.example.homeworkapp.data.repository.ReminderRepository
-import com.example.homeworkapp.ui.theme.messageList.MessageListViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.*
 
 class LoginViewModel(
     application: Application

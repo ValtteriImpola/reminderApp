@@ -11,14 +11,10 @@ import com.example.homeworkapp.ui.theme.home.Home
 import com.example.homeworkapp.ui.theme.home.HomeViewModel
 import com.example.homeworkapp.ui.theme.login.LoginScreen
 import com.example.homeworkapp.ui.theme.login.LoginViewModel
-import com.example.homeworkapp.ui.theme.messageList.MessageListViewModel
-
 @Composable
 fun HomeWorkApp(
     viewModelLogIn: LoginViewModel,
     appState: HomeWorkAppState = rememberHomeWorkAppState(),
-    viewModel: MessageListViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-
 ) {
     NavHost(
         navController = appState.navController,

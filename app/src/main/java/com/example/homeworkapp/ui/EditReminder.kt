@@ -1,5 +1,7 @@
 package com.example.homeworkapp.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,11 +9,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.homeworkapp.data.entity.Reminder
 import com.example.homeworkapp.ui.theme.login.LoginViewModel
 import java.util.*
@@ -27,7 +31,7 @@ fun EditReminder (
     //val reminder by viewModel.searchReminderWithId()
    // val searchReults by viewModel.searchResults.observeAsState(listOf())
     val messageContent = remember { mutableStateOf(viewState.reminder.message) }
-    val messageTopic = remember { mutableStateOf(viewState.reminder.type) }
+   // val messageTopic = remember { mutableStateOf(viewState.reminder.) }
     Surface {
         Column(
             modifier = Modifier
@@ -43,7 +47,7 @@ fun EditReminder (
                         contentDescription = null
                     )
                 }
-                Text(text = "Reminder")
+                Text(text = "Home")
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -55,21 +59,23 @@ fun EditReminder (
                     modifier = Modifier.fillMaxWidth(),
                     value = messageContent.value,
                     onValueChange = { text -> messageContent.value = text},
-                    label = { Text(text = "Message topic") },
-                    shape = RoundedCornerShape(corner = CornerSize(50.dp))
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = messageTopic.value,
-                    onValueChange = { text -> messageTopic.value = text},
                     label = { Text(text = "Message content") },
                     shape = RoundedCornerShape(corner = CornerSize(50.dp))
                 )
+                        Image(
+                            painter = rememberImagePainter(viewState.reminder.image_data.toUri()),
+                            contentScale = ContentScale.FillWidth,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(16.dp, 8.dp)
+                                .size(200.dp)
+                                .clickable {
+
+                                }
+                        )
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
-                    onClick = { handleAddingNewMessage(viewModel, navController, viewState.reminder.id,  messageContent.value, messageTopic.value) },
+                    onClick = { handleAddingNewMessage(viewModel, navController, viewState.reminder.id,  messageContent.value, viewState.reminder.image_data) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(55.dp)
@@ -88,9 +94,9 @@ private fun handleAddingNewMessage(
     navController: NavController,
     id: Long,
     content: String,
-    type: String,
-
+    image_data: String
 ) {
-    viewModel.insertReminder(Reminder( id = id,message = content, type = type, date = Date().toString()))
+    viewModel.insertReminder(Reminder( id = id,message = content, reminder_seen = false,
+        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, image_data ))
     navController.navigate("home")
 }
