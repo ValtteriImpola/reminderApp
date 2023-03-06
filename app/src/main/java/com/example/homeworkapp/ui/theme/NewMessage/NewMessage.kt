@@ -27,7 +27,6 @@ import com.example.homeworkapp.data.entity.Reminder
 import com.example.homeworkapp.ui.theme.login.LoginViewModel
 import java.util.*
 
-
 @OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun NewMessage(
@@ -36,8 +35,9 @@ fun NewMessage(
     viewModel: LoginViewModel
 ) {
     val messageContent = remember { mutableStateOf("") }
-
+    val useNotification = remember { mutableStateOf(false) }
     var selectImages by remember { mutableStateOf(listOf<Uri>()) }
+    val timeUntilNotification = remember { mutableStateOf("0") }
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
@@ -103,11 +103,29 @@ fun NewMessage(
                         savedUri = uri
                     }
                 }
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row( modifier = Modifier.padding(16.dp)) {
+                    Text(text = "Add notification")
+                    RadioButton(selected = useNotification.value, onClick = { useNotification.value = !useNotification.value})
+                }
+
+                if (useNotification.value){
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = timeUntilNotification.value,
+                        onValueChange = { timeString -> timeUntilNotification.value = timeString},
+                        label = { Text(text = "Seconds until notification") },
+                        shape = RoundedCornerShape(corner = CornerSize(50.dp))
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
-                    onClick = { handleAddingNewMessage(viewModel, navController, messageContent.value, selectImages[0]) },
-                    modifier = Modifier.fillMaxWidth().size(55.dp)
+                    onClick = { handleAddingNewMessage(viewModel, navController, messageContent.value, selectImages[0], timeUntilNotification.value.toInt(), useNotification.value) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(55.dp)
                 ) {
                     Text("Save reminder")
                 }
@@ -116,19 +134,19 @@ fun NewMessage(
 
     }
 }
-
 private fun handleAddingNewMessage(
     viewModel: LoginViewModel,
     navController: NavController,
     content: String,
-    uri: Uri
+    uri: Uri,
+    timeToExecute: Int,
+    useNotification: Boolean
 ) {
-    //viewModel.inc(content, type)
-
-    val ss = uri.toString()
     val generatedID: Int = (10..10000).random()
+
     viewModel.insertReminder(Reminder( id = generatedID.toLong(),message = content, reminder_seen = false,
-        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, uri.toString()  ))
+        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, uri.toString(),
+        !useNotification), viewModel, timeToExecute, useNotification)
     navController.navigate("home")
 }
 

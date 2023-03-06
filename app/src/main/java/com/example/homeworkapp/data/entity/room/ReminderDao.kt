@@ -20,7 +20,7 @@ interface ReminderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entity: Reminder): Long
 
-    @Query("SELECT * FROM reminders")
+    @Query("SELECT * FROM reminders WHERE show_reminder = 1")
     fun getAllReminders(): LiveData<List<Reminder>>
 
     @Query("DELETE FROM reminders WHERE id = :id")

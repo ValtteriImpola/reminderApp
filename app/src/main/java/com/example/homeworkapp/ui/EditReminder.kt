@@ -47,7 +47,13 @@ fun EditReminder (
                         contentDescription = null
                     )
                 }
-                Text(text = "Home")
+                if (viewState.reminder.show_reminder == true) {
+                    Text(text = "Home")
+                }
+                else {
+                    Text(text = "pöö")
+                }
+
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -96,7 +102,7 @@ private fun handleAddingNewMessage(
     content: String,
     image_data: String
 ) {
-    viewModel.insertReminder(Reminder( id = id,message = content, reminder_seen = false,
-        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, image_data ))
+    viewModel.insertReminder(Reminder( id = id,message = content, reminder_seen = true,
+        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, image_data, true), viewModel,0, false)
     navController.navigate("home")
 }

@@ -9,7 +9,11 @@ import android.os.Build.VERSION_CODES
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.*
 import androidx.work.*
-import android.R;
+import com.example.homeworkapp.R
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.util.Log
+
 import androidx.core.app.NotificationManagerCompat
 import com.example.homeworkapp.data.entity.Credentials
 import com.example.homeworkapp.data.entity.Message
@@ -34,15 +38,20 @@ class LoginViewModel(
     private val repositoryReminder: ReminderRepository
     private val _state = MutableStateFlow(MessageListViewState())
     private val _reminderInEdit = MutableStateFlow(ReminderInEditViewState())
+    private val _notificationTime = MutableStateFlow(NotificationTimeViewState())
     private val appContext = application.applicationContext
     val state: StateFlow<MessageListViewState>
         get() = _state
 
     val reminderInEdit: StateFlow<ReminderInEditViewState>
         get() = _reminderInEdit
+
+    val notificationTime: StateFlow<NotificationTimeViewState>
+        get() = _notificationTime
+
     init {
         createNotificationChannel(context = application.applicationContext)
-        setOneTimeNotification(application.applicationContext)
+       // setOneTimeNotification(application.applicationContext)
         val credentialDb = HomeWorkDatabase.getInstance(application)
         val credentialDao = credentialDb.credentialsDao()
         repository = CredentialsRepository(credentialDao)
@@ -60,8 +69,14 @@ class LoginViewModel(
 
     }
 
-    fun insertReminder(reminder: Reminder) {
-        createReminderMadeNotification(appContext, reminder)
+    fun insertReminder(reminder: Reminder, viewModel: LoginViewModel, executionTime: Int, useNotification: Boolean) {
+        if(useNotification){
+            setSceduledNotification( appContext , reminder, executionTime, viewModel)
+        }
+        repositoryReminder.insertReminder(reminder)
+    }
+
+    fun updateReminder(reminder: Reminder) {
         repositoryReminder.insertReminder(reminder)
     }
 
@@ -87,16 +102,26 @@ class LoginViewModel(
             )
         }
     }
+
+    fun setNotificationTime(time: Int) {
+        viewModelScope.launch {
+            _notificationTime.value = NotificationTimeViewState(
+                time = time
+            )
+        }
+    }
 }
 
-private fun setOneTimeNotification(context: Context) {
+
+private fun setSceduledNotification(context: Context, reminder: Reminder, executionTime: Int, viewModel: LoginViewModel) {
     val workManager = WorkManager.getInstance(context)
+    val delay = executionTime.toLong()
     val constraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
-
+    Log.i("NotificationDelay", "Minutes $delay")
     val notificationWorker = OneTimeWorkRequestBuilder<NotificationWorker>()
-        .setInitialDelay(20,TimeUnit.SECONDS)
+        .setInitialDelay(delay,TimeUnit.SECONDS)
         .setConstraints(constraints)
         .build()
 
@@ -106,9 +131,9 @@ private fun setOneTimeNotification(context: Context) {
     workManager.getWorkInfoByIdLiveData(notificationWorker.id)
         .observeForever { workInfo ->
             if (workInfo.state == WorkInfo.State.SUCCEEDED) {
-                createSuccessNotification(context)
-            } else{
-                createErrorNotification(context)
+                createSuccessNotification(context, reminder.message)
+                reminder.show_reminder = true
+                viewModel.updateReminder(reminder)
             }
         }
 }
@@ -116,7 +141,7 @@ private fun setOneTimeNotification(context: Context) {
 private fun createErrorNotification(context: Context) {
     val noticationId = 2
     val builder = NotificationCompat.Builder(context, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_dialog_info)
+        .setSmallIcon(R.drawable.header_background)
         .setContentInfo("Failure!")
         .setContentText("Your countdown failed")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -126,12 +151,18 @@ private fun createErrorNotification(context: Context) {
         notify(noticationId, builder.build())
     }
 }
-private fun createSuccessNotification(context: Context) {
+private fun createSuccessNotification(context: Context, message: String) {
     val noticationId = 1
+    val myBitmap = BitmapFactory.decodeResource(context.resources, com.example.homeworkapp.R.drawable.tausta)
     val builder = NotificationCompat.Builder(context, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_dialog_info)
+        .setSmallIcon(R.drawable.tausta)
         .setContentInfo("Success!")
-        .setContentText("Your countdown completed successfully")
+        .setContentText(message)
+        .setLargeIcon(myBitmap)
+        .setStyle(NotificationCompat.BigPictureStyle()
+            .bigPicture(myBitmap)
+            .bigLargeIcon(null)
+        )
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
     with(NotificationManagerCompat.from(context)) {
@@ -140,10 +171,10 @@ private fun createSuccessNotification(context: Context) {
     }
 }
 
-private fun createReminderMadeNotification(context: Context,reminder: Reminder){
+private fun createReminderMadeNotification(context: Context,reminder: Reminder, timeToExecute: Int){
     val noticationId = 3
     val builder = NotificationCompat.Builder(context, "CHANNEL_ID")
-        .setSmallIcon(R.drawable.ic_dialog_info)
+        .setSmallIcon(R.drawable.header_background)
         .setContentInfo("New Reminder made")
         .setContentText(" $${reminder.message}")
         .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -175,5 +206,9 @@ data class MessageListViewState(
 )
 data class ReminderInEditViewState(
     val reminder: Reminder = Reminder()
+)
+
+data class NotificationTimeViewState(
+    val time: Int = 0
 )
 

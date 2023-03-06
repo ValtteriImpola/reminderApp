@@ -32,12 +32,14 @@ class Reminder {
     var creator_id: Long = 0
     @ColumnInfo(name = "image_data")
     var image_data: String = ""
+    @ColumnInfo(name = "show_reminder")
+    var show_reminder: Boolean = false
 
 
     constructor() {}
 
     constructor(id: Long, message: String, reminder_seen: Boolean, reminder_time: String,
-                location_x: String, location_y: String, creator_id: Long, image_data: String) {
+                location_x: String, location_y: String, creator_id: Long, image_data: String, show_reminder: Boolean) {
         this.id = id
         this.message = message
         this.reminder_seen = reminder_seen
@@ -46,6 +48,7 @@ class Reminder {
         this.location_y = location_y
         this.creator_id = creator_id
         this.image_data = image_data
+        this.show_reminder = show_reminder
 
     }
 }
