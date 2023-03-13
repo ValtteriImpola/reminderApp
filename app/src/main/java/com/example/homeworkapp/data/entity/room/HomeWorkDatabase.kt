@@ -9,7 +9,7 @@ import com.example.homeworkapp.data.entity.Reminder
 
 @androidx.room.Database(
     entities = [Credentials::class, Reminder::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class HomeWorkDatabase : RoomDatabase() {

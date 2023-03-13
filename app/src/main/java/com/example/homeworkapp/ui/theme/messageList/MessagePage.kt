@@ -1,6 +1,7 @@
 package com.example.homeworkapp.ui.theme.messageList
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,6 +31,7 @@ import com.example.homeworkapp.ui.EditReminder
 import com.example.homeworkapp.ui.theme.login.LoginViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.log
 
 @Composable
 fun MessagePage(
@@ -60,6 +62,7 @@ private fun MessageList(
         verticalArrangement = Arrangement.Center
     ){
         items(list) { item ->
+            Log.i("NotificationWorker", "${item.message}")
             MessageListItem(
                 reminder = item,
                 onClick = {},
@@ -79,6 +82,7 @@ private fun MessageListItem(
     navController: NavController,
     viewModel: LoginViewModel
 ) {
+
     ConstraintLayout(modifier = Modifier.clickable { onClick() }) {
         val (divider, messageContent, messageType, icon, date) = createRefs()
         Divider(
@@ -92,6 +96,7 @@ private fun MessageListItem(
         )
         // Title
         Text(
+
             text = reminder.message,
             maxLines = 2,
             style = MaterialTheme.typography.subtitle1,

@@ -81,7 +81,7 @@ fun EditReminder (
                         )
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
-                    onClick = { handleAddingNewMessage(viewModel, navController, viewState.reminder.id,  messageContent.value, viewState.reminder.image_data) },
+                    onClick = { handleAddingNewMessage(viewModel, navController, viewState.reminder.id,  messageContent.value, viewState.reminder.image_data, viewState.reminder.location_y,viewState.reminder.location_x) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(55.dp)
@@ -100,9 +100,14 @@ private fun handleAddingNewMessage(
     navController: NavController,
     id: Long,
     content: String,
-    image_data: String
+    image_data: String,
+    lng: Double?,
+    lat: Double?
 ) {
+    val generatedID: Int = (10..10000).random()
+    val latitude = lat ?: 0.0
+    val longitude = lng ?: 0.0
     viewModel.insertReminder(Reminder( id = id,message = content, reminder_seen = true,
-        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, image_data, true), viewModel,0, false)
+        reminder_time = Date().toString(), location_x = latitude, location_y = longitude, creator_id = 1, image_data, true), viewModel,0, false)
     navController.navigate("home")
 }

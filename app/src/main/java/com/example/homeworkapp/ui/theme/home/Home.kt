@@ -8,6 +8,7 @@ import androidx.compose.material.*
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ fun HomeContent(
 
             }
         }
+
     ) {
         Column(
             modifier = Modifier
@@ -83,8 +85,8 @@ private fun HomeAppBar(
         },
         backgroundColor = backgroundColor,
         actions = {
-            IconButton( onClick = {} ) {
-                Icon(imageVector = Icons.Filled.Search, contentDescription = "search")
+            IconButton(onClick = { navController.navigate("searchMap")}) {
+                Icon(imageVector = Icons.Filled.LocationOn, contentDescription = "search")
             }
             IconButton( onClick = {navController.navigate(route = "loginScreen") } ) {
                 Icon(imageVector = Icons.Filled.Person, contentDescription = "account")

@@ -25,6 +25,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.homeworkapp.data.entity.Reminder
 import com.example.homeworkapp.ui.theme.login.LoginViewModel
+import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
 @OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
@@ -38,6 +39,12 @@ fun NewMessage(
     val useNotification = remember { mutableStateOf(false) }
     var selectImages by remember { mutableStateOf(listOf<Uri>()) }
     val timeUntilNotification = remember { mutableStateOf("0") }
+
+    val latlng = navController
+        .currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<LatLng>("location_data")
+        ?.value
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
@@ -119,10 +126,26 @@ fun NewMessage(
                         shape = RoundedCornerShape(corner = CornerSize(50.dp))
                     )
                 }
+                Spacer(modifier = Modifier.height(10.dp))
+                if(latlng == null)
+                {
+                    OutlinedButton(
+                        onClick = { navController.navigate("map") },
+                        modifier = Modifier.height(55.dp)
+                    ) {
+                        Text(text = "Reminder location")
+                    }
+                } else {
+                    Text(
+                        text = "Lat: ${latlng.latitude}, \n Lng: ${latlng.longitude}"
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
-                    onClick = { handleAddingNewMessage(viewModel, navController, messageContent.value, selectImages[0], timeUntilNotification.value.toInt(), useNotification.value) },
+                    onClick = { handleAddingNewMessage(viewModel, navController, messageContent.value,
+                        selectImages[0], timeUntilNotification.value.toInt(), useNotification.value, latlng?.longitude , latlng?.latitude) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(55.dp)
@@ -140,12 +163,15 @@ private fun handleAddingNewMessage(
     content: String,
     uri: Uri,
     timeToExecute: Int,
-    useNotification: Boolean
+    useNotification: Boolean,
+    lng: Double?,
+    lat: Double?
 ) {
     val generatedID: Int = (10..10000).random()
-
+    val latitude = lat ?: 0.0
+    val longitude = lng ?: 0.0
     viewModel.insertReminder(Reminder( id = generatedID.toLong(),message = content, reminder_seen = false,
-        reminder_time = Date().toString(), location_x = "", location_y = "", creator_id = 1, uri.toString(),
+        reminder_time = Date().toString(), location_x = latitude, location_y = longitude, creator_id = 1, uri.toString(),
         !useNotification), viewModel, timeToExecute, useNotification)
     navController.navigate("home")
 }

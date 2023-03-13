@@ -12,6 +12,7 @@ import androidx.work.*
 import com.example.homeworkapp.R
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.speech.tts.TextToSpeech
 import android.util.Log
 
 import androidx.core.app.NotificationManagerCompat
@@ -25,6 +26,7 @@ import com.example.homeworkapp.ui.util.NotificationWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class LoginViewModel(
@@ -35,11 +37,13 @@ class LoginViewModel(
     private val repository: CredentialsRepository
     val searchResults: MutableLiveData<List<Reminder>>
     val reminder: LiveData<List<Reminder>>
+
+    private var textToSpeech: TextToSpeech? = null
     private val repositoryReminder: ReminderRepository
     private val _state = MutableStateFlow(MessageListViewState())
     private val _reminderInEdit = MutableStateFlow(ReminderInEditViewState())
     private val _notificationTime = MutableStateFlow(NotificationTimeViewState())
-    private val appContext = application.applicationContext
+    private var appContext = application.applicationContext
     val state: StateFlow<MessageListViewState>
         get() = _state
 
@@ -108,6 +112,26 @@ class LoginViewModel(
             _notificationTime.value = NotificationTimeViewState(
                 time = time
             )
+        }
+    }
+
+    fun textToSpeech(text: String?){
+
+        textToSpeech = TextToSpeech(
+            appContext
+        ){
+            if ( it == TextToSpeech.SUCCESS){
+                textToSpeech?.let {txtToSpeech ->
+                    txtToSpeech.language = Locale.US
+                    txtToSpeech.setSpeechRate(1.0f)
+                    txtToSpeech.speak(
+                        text,
+                        TextToSpeech.QUEUE_ADD,
+                        null,
+                        null
+                    )
+                }
+            }
         }
     }
 }
